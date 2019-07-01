@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using NzbDrone.Common.EnvironmentInfo;
 using NzbDrone.Common.Extensions;
+using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download.TrackedDownloads;
 using NzbDrone.Core.History;
 using NzbDrone.Core.MediaFiles;
@@ -102,7 +103,9 @@ namespace NzbDrone.Core.Download
             var outputPath = trackedDownload.DownloadItem.OutputPath.FullPath;
             var importResults = _downloadedEpisodesImportService.ProcessPath(outputPath, ImportMode.Auto, trackedDownload.RemoteEpisode.Series, trackedDownload.DownloadItem);
 
-            if (importResults.Where(c => c.Result == ImportResultType.Imported)
+            // Treat imported and skipped files the same way, since Sonarr skipped the import instead of re-importing the file again
+
+            if (importResults.Where(c => c.Result == ImportResultType.Imported || c.Result == ImportResultType.Skipped)
                              .SelectMany(c => c.ImportDecision.LocalEpisode.Episodes)
                              .Count() >= Math.Max(1, trackedDownload.RemoteEpisode.Episodes.Count))
             {
