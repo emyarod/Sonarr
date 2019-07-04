@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using NzbDrone.Common.EnsureThat;
-using NzbDrone.Core.DecisionEngine;
 
 namespace NzbDrone.Core.MediaFiles.EpisodeImport
 {
@@ -22,11 +21,6 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport
                     }
 
                     return ImportResultType.Rejected;
-                }
-
-                if (ImportDecision.Rejections.All(r => r.Type == RejectionType.Skip))
-                {
-                    return ImportResultType.Skipped;
                 }
 
                 return ImportResultType.Imported;

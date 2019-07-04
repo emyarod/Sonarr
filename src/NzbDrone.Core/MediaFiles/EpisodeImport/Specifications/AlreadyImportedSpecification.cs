@@ -1,7 +1,5 @@
 using System.Linq;
 using NLog;
-using NzbDrone.Common.Extensions;
-using NzbDrone.Core.Configuration;
 using NzbDrone.Core.DecisionEngine;
 using NzbDrone.Core.Download;
 using NzbDrone.Core.History;
@@ -12,20 +10,16 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
     public class AlreadyImportedSpecification : IImportDecisionEngineSpecification
     {
         private readonly IHistoryService _historyService;
-        private readonly IConfigService _configService;
         private readonly Logger _logger;
 
         public AlreadyImportedSpecification(IHistoryService historyService,
-                                            IConfigService configService,
                                             Logger logger)
         {
             _historyService = historyService;
-            _configService = configService;
             _logger = logger;
         }
 
         public SpecificationPriority Priority => SpecificationPriority.Database;
-        public RejectionType Type => RejectionType.Skip;
 
         public Decision IsSatisfiedBy(LocalEpisode localEpisode, DownloadClientItem downloadClientItem)
         {
@@ -51,7 +45,7 @@ namespace NzbDrone.Core.MediaFiles.EpisodeImport.Specifications
                     continue;
                 }
 
-                // TODO: Ignore last imported check if another release was grabbed
+                // TODO: Ignore last imported check if the same release was grabbed again
                 // See: https://github.com/Sonarr/Sonarr/issues/2393
 
                 if (lastImported.DownloadId == downloadClientItem.DownloadId)
